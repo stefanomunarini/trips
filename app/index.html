@@ -31,9 +31,25 @@
                 <input type="submit" value="Add"/>
             </form>
         </div>
-        <script>
-            $('#location_form').submit(function(){
+    </div>
+    <div id="map"></div>
+    <div id="location_list"></div>
+    <script>
+        $(document).ready(function(){
+            $.ajax({
+                url: "/api/locations",
+                type: "GET",
+                success: function (data) {
+                    $.each(data, function(place){
+                        $('#location_list').append('<p>' + data[place].name + ' <a class="location_remove">X</a></p>');
+                    });
+                },
+                error: function (request, status, error) {
+                    console.log('error', status);
+                }
+            });
 
+            $('#location_form').submit(function(){
                 var name = $('#name').val();
                 var coordinates = $('#coordinates').val();
                 $.ajax({
@@ -49,31 +65,36 @@
                 });
                 return false;
             });
-        </script>
-        <div id="map"></div>
-        <script>
-            var center = {lat: 0, lng: 0};
-              function initMap() {
-                var coordinates = {}
-                $.getJSON("http://localhost:3000/api/locations", function(data) {
-                    data = $.parseJSON(data);
-                    $.each(data, function(key, value){
-                        var lat = data[key]['geospatial']['coordinates'][0];
-                        var lon = data[key]['geospatial']['coordinates'][1];
-                        coordinates[data[key]['name']] = data[key]['geospatial']['coordinates'];
-                        var marker = new google.maps.Marker({
-                          position: {lat: lat, lng: lon},
-                          map: map
-                        });
+
+            $('.location_remove').click(function(){
+                console.log('sjjs');
+                console.log(item)
+            })
+        });
+    </script>
+    <script>
+        var center = {lat: 0, lng: 0};
+
+        function initMap() {
+            var coordinates = {}
+            $.getJSON("http://localhost:3000/api/locations", function(data) {
+                data = $.parseJSON(JSON.stringify(data));
+                $.each(data, function(key, value){
+                    var lat = data[key]['geospatial']['coordinates'][0];
+                    var lon = data[key]['geospatial']['coordinates'][1];
+                    coordinates[data[key]['name']] = data[key]['geospatial']['coordinates'];
+                    var marker = new google.maps.Marker({
+                        position: {lat: lat, lng: lon},
+                        map: map
                     });
                 });
-                var map = new google.maps.Map(document.getElementById('map'), {
-                  zoom: 2,
-                  center: center
-                });
-              }
-        </script>
-        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD2AkfJtMi3MRk6s-Pe2wEk5rqelWTxXyA&callback=initMap"></script>
-    </div>
+            });
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 2,
+                center: center
+            });
+        }
+    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD2AkfJtMi3MRk6s-Pe2wEk5rqelWTxXyA&callback=initMap"></script>
 </body>
 </html>

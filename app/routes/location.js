@@ -12,7 +12,7 @@ router.route('/locations')
 
 	.get(function(req, res){
 		Location.find().lean().exec(function(error, locations){
-			res.json(JSON.stringify(locations));
+			res.json(locations);
 		});
 	})
 
@@ -34,6 +34,15 @@ router.route('/locations_html')
 
 	.get(function(req, res){
 		res.sendFile(path.join(__dirname+'/../index.html'));
+	});
+
+router.route('/location/:id')
+
+	.delete(function(req, res){
+		Location.remove({ _id: req.params.id }, function (err, user) {
+			if (err) return res.send(err);
+			res.json({ message: 'Deleted' });
+		});
 	});
 
 module.exports.routes = router;

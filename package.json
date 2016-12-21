@@ -4,6 +4,7 @@
   "description": "Save your trips",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon app/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Stefano Munarini",
