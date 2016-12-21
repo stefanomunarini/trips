@@ -1,40 +1,79 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <script   src="https://code.jquery.com/jquery-3.1.1.min.js"   integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="   crossorigin="anonymous"></script>
+    <title>Trips Map</title>
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
     <style>
        #map {
-        height: 400px;
-        width: 100%;
+           height: 500px;
+           width: 80%;
        }
     </style>
 </head>
 <body>
-	<div id="map"></div>
-	<script>
-	var center = {lat: 0, lng: 0};
-      function initMap() {
-      	coordinates = {}
-      	$.getJSON("http://localhost:3000/api/locations", function( data ) {
+    <div id="container">
+        <div>
+            <form id="location_form" method="POST" onsubmit="return false">
+                <label>Add new location:</label>
+                <br/>
+                <label for="name">City</label>
+                <input type="text" name="name" id="name"/>
+                <br/>
+                <label for="coordinates">Coordinates (e.g. 45.692401,11.483902)</label>
+                <input type="text" name="coordinates" id="coordinates"/>
+                <br/>
+                <input type="submit" value="Add"/>
+            </form>
+        </div>
+        <script>
+            $('#location_form').submit(function(){
 
-      		data = $.parseJSON(data);
-      		$.each(data, function(key, value){
-      			var lat = data[key]['geospatial']['coordinates'][0];
-      			var lon = data[key]['geospatial']['coordinates'][1];
-      			coordinates[data[key]['name']] = data[key]['geospatial']['coordinates'];
-      			var marker = new google.maps.Marker({
-		          position: {lat: lat, lng: lon},
-		          map: map
-		        });
-      		});
-      	});
-        var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 2,
-          center: center
-        });
-      }
-    </script>
-	<script async defer src="https://maps.googleapis.com/maps/api/js?key=&callback=initMap">
-    </script>
+                var name = $('#name').val();
+                var coordinates = $('#coordinates').val();
+                $.ajax({
+                    url: "/api/locations",
+                    type: "POST",
+                    data: {name: name, coordinates: coordinates},
+                    success: function (data) {
+                        console.log('success!');
+                    },
+                    error: function (request, status, error) {
+                        console.log('error');
+                    }
+                });
+                return false;
+            });
+        </script>
+        <div id="map"></div>
+        <script>
+            var center = {lat: 0, lng: 0};
+              function initMap() {
+                var coordinates = {}
+                $.getJSON("http://localhost:3000/api/locations", function(data) {
+                    data = $.parseJSON(data);
+                    $.each(data, function(key, value){
+                        var lat = data[key]['geospatial']['coordinates'][0];
+                        var lon = data[key]['geospatial']['coordinates'][1];
+                        coordinates[data[key]['name']] = data[key]['geospatial']['coordinates'];
+                        var marker = new google.maps.Marker({
+                          position: {lat: lat, lng: lon},
+                          map: map
+                        });
+                    });
+                });
+                var map = new google.maps.Map(document.getElementById('map'), {
+                  zoom: 2,
+                  center: center
+                });
+              }
+        </script>
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD2AkfJtMi3MRk6s-Pe2wEk5rqelWTxXyA&callback=initMap"></script>
+    </div>
 </body>
 </html>

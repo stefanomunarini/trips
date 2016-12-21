@@ -10,8 +10,12 @@
   "license": "ISC",
   "dependencies": {
     "@google/maps": "^0.3.0",
+    "babel": "^6.5.2",
     "body-parser": "^1.15.2",
+    "browserify": "^13.1.1",
     "express": "^4.14.0",
-    "mongoose": "^4.6.7"
+    "mongoose": "^4.6.7",
+    "node-jsx": "^0.13.3",
+    "react": "^15.4.1"
   }
 }

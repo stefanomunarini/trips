@@ -8,7 +8,7 @@ var config = function(env){
         "MONGO_URI": "mongodb://" + process.env.MONGODB_PORT_27017_TCP_ADDR + ":" +
                      process.env.MONGODB_PORT_27017_TCP_PORT + 
                      "/trips"
-    	}
+        }
 	}
 }
 
